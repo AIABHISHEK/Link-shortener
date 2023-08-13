@@ -11,13 +11,12 @@ import URL from "../models/urlModel.js";
  */
 export const shortUrl = (req, res, next) => {
   // console.log(id);/
+  console.log(req.body.url);
   createId().then((id) => {
     let url = new URL({
       originalUrl: req.body.url,
       shortUrl: id,
-    }).catch((error) => {
-      console.log(error);
-    });
+    })
     url
       .save()
       .then((response) => {
@@ -27,7 +26,7 @@ export const shortUrl = (req, res, next) => {
         console.log(error);
         res.status(500).json({ message: "something went wrong" });
       });
-  });
+  }).catch((error) => { console });
 };
 
 /**
@@ -42,11 +41,10 @@ export const getUrl = (req, res, next) => {
   // console.log(req);
   URL.find({ shortUrl: req.params.urlId })
     .then((response) => {
-      console.log(response);
-      if (response.length === 0)
+      if (response.length == 0)
         return res.status(404).json({ message: "url not found" });
-      res.redirect(response[0].originalUrl);
-      // res.status(200).json(response[0].originalUrl);
+      // res.redirect(response[0].originalUrl);
+      res.status(200).json(response[0].originalUrl);
     })
     .catch((err) => {
       console.log(err);
@@ -63,7 +61,7 @@ export const getUrl = (req, res, next) => {
  */
 async function createId() {
   try {
-    const id = await nanoid(6);
+    const id = await nanoid(8);
     return id;
   } catch (error) {
     console.log(error);

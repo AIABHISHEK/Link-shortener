@@ -7,6 +7,20 @@ const port = 3000;
 import shortRoutes from "./routes/route.js";
 import { configDotenv } from "dotenv";
 
+// Load environment variables based on NODE_ENV
+console.log(process.env.NODE_ENV);
+if (process.env.NODE_ENV === "production") {
+  configDotenv({ path: ".env.production" });
+} else if (process.env.NODE_ENV === "development") {
+  configDotenv({ path: ".env.development" });
+} else {
+  throw new Error("Invalid NODE_ENV");
+}
+
+// Now you can access your environment variables anywhere in your app
+
+
+
 
 app.use(bodyParser.json()); //for content type application/json
 
@@ -29,6 +43,7 @@ app.use(shortRoutes);
  * @returns - Returns a promise.
  * 
  */
+// 
 connect(process.env.MONGO_DB_URL, {
     useNewUrlParser: true,
   })
