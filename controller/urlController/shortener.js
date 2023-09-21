@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid/async";
-import URL from "../models/urlModel.js";
+import URL from "../../models/urlModel.js";
 
 /**
  * Generate a short URL for a given original URL.
@@ -16,6 +16,7 @@ export const shortUrl = (req, res, next) => {
     let url = new URL({
       originalUrl: req.body.url,
       shortUrl: id,
+      user: req.userId
     })
     url
       .save()
@@ -43,8 +44,8 @@ export const getUrl = (req, res, next) => {
     .then((response) => {
       if (response.length == 0)
         return res.status(404).json({ message: "url not found" });
-      // res.redirect(response[0].originalUrl);
-      res.status(200).json(response[0].originalUrl);
+      res.redirect(response[0].originalUrl);
+      // res.status(200).json(response[0].originalUrl);
     })
     .catch((err) => {
       console.log(err);

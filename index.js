@@ -8,7 +8,6 @@ import shortRoutes from "./routes/route.js";
 import { configDotenv } from "dotenv";
 
 // Load environment variables based on NODE_ENV
-console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === "production") {
   configDotenv({ path: ".env.production" });
 } else if (process.env.NODE_ENV === "development") {
