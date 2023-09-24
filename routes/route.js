@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { body, check } from "express-validator";
+import { body, check, param } from "express-validator";
 import auth from "../middleware/auth.js";
 const router = Router();
-import { shortUrl, getUrl } from "../controller/urlController/shortener.js";
+import { shortUrl, getUrl, shortUrlCustom } from "../controller/urlController/shortener.js";
 import { login, signup } from "../controller/auth.js";
+
 
 //TODO:add validation array in separate file
 const val = [
@@ -13,8 +14,24 @@ const val = [
     body("userName"),
 ]
 
-router.post("/url", auth, shortUrl);
-router.get("/:urlId", getUrl);
+//get short url
+router.post("/url", auth, [body("url").isURL().withMessage("Invalid url"), body("url").isLength({ min: 10, max: 1500 }).withMessage("Invalid url")], shortUrl);
+
+// to get custom url 
+router.post("/url-custom/", auth, [
+    body("url").isURL().withMessage("Invalid url").isLength({ min: 10, max: 1500 }).withMessage("Invalid url"),
+    body("urlId").matches(/^[a-zA-Z0-9_]+$/).withMessage("Custom url is Invalid urlId should conatin numbers alphabets or _ ")], shortUrlCustom);
+
+// to redirect to url
+router.get("/:urlId", [param("urlId").isAlphanumeric().withMessage("Invalid urlId").isLength({ min: 5, max: 15 }).withMessage("Invalid urlId")], getUrl);
+
+router.post(
+    "/signup",
+    val
+    ,
+    signup
+);
+
 router.post("/login", login);
 //TODO:add password validation
 /*
@@ -24,11 +41,13 @@ body('password')
     .withMessage('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character');
     */
 
-router.post(
-    "/signup",
-    val
-    ,
-    signup
-);
+
+
+//TODO : add vaildation in getUrl params(urlId)
+const pattern = /^[a-zA-Z0-9_]+$/;
+
+function containsValidCharacters(input) {
+    return pattern.test(input);
+}
 
 export default router;
